@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Timbre Escolar Automático | Liceo Campestre Mundo Mágico</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+  <style>
+    /* 🎨 Variables de Diseño */
+    :root {
+      --bg-dark: #0f172a;
+      --bg-surface: #111827;
+      --bg-panel: #0b1220;
+      --color-primary: #3b82f6;
+      --color-accent: #8b5cf6;
+      --color-text: #f8fafc;
+      --color-muted: #94a3b8;
+      --color-highlight: #a5b4fc; /* Tono de realce para títulos */
+      --border-color: rgba(255, 255, 255, 0.04);
+      --shadow-hover: 0 18px 40px rgba(2, 6, 23, 0.6);
+      --transition-fast: 0.18s ease;
+    }
+    
+    /* Reset & Base */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Inter', system-ui, Arial, sans-serif;
+      background: linear-gradient(180deg, var(--bg-dark), #071026 120%);
+      color: var(--color-text);
+      -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth;
+    }
+
+    /* Layout */
+    .slides { width: 100%; overflow-x: hidden; }
+    .slide-section {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1rem;
+    }
+    .slide-inner { max-width: 1200px; width: 100%; }
+
+    /* Heading Styles (Generales para 2, 3, 4) */
+    .section-title { 
+      text-align: center; 
+      margin-bottom: 1.5rem; 
+      color: var(--color-primary); 
+      font-family: 'Poppins'; 
+      font-size: 1.8rem;
+    }
+    .subtitle {
+      color: var(--color-muted);
+      font-size: 1.05rem;
+      max-width: 900px;
+      margin: 0.25rem auto 1.5rem;
+      text-align: center;
+    }
+
+    /* --- ESTILOS DIAPOSITIVA 1: HERO --- */
+    .hero-slide {
+      display: flex;
+      flex-direction: row; 
+      align-items: center;
+      gap: 3rem;
+      padding: 3rem; 
+    }
+    .hero-content {
+      flex: 1; 
+      text-align: left;
+    }
+
+    /* Estilo para el logo */
+    .school-logo {
+      display: block; 
+      width: 100px; 
+      height: auto;
+      margin-bottom: 1.5rem; 
+    }
+    
+    /* Clase para resaltar texto con color de realce (reemplaza los **) */
+    .resaltado {
+      color: var(--color-highlight); 
+      font-weight: 600; 
+    }
+
+    .title-large {
+      font-family: 'Poppins', sans-serif;
+      font-size: 4.5rem; 
+      color: transparent;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      margin-bottom: 0.8rem; 
+      text-align: left; 
+      line-height: 1.1;
+      font-weight: 800; /* Más peso */
+    }
+    .subtitle-large {
+      color: var(--color-muted);
+      font-size: 1.4rem; 
+      max-width: 700px; 
+      margin: 0.5rem 0 2.5rem 0; 
+      text-align: left; 
+      line-height: 1.5;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr; 
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .hero-card {
+      background: rgba(255, 255, 255, 0.03); 
+      padding: 1.8rem; 
+      border-radius: 15px; 
+      border: 1px solid rgba(255, 255, 255, 0.08); 
+      height: 100%; 
+    }
+    .hero-card h3 {
+      font-size: 1.4rem; 
+      margin-bottom: 0.8rem;
+      color: var(--color-highlight); 
+      font-family: 'Poppins';
+    }
+    .hero-image-container {
+      flex-shrink: 0; 
+      width: 450px; 
+      height: 450px; 
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      background: var(--bg-surface); 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--color-primary);
+    }
+    .hero-image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; 
+    }
+    /* --- FIN ESTILOS DIAPOSITIVA 1 --- */
+
+    /* Cards and Grids (Diapositivas 2, 3) */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-top: 1.25rem; }
+    .card { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; transition: transform var(--transition-fast), box-shadow var(--transition-fast); cursor: pointer; }
+    .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+    .card.active { border-color: var(--color-primary); background: rgba(59, 130, 246, 0.05); } /* Estilo para el cuadro seleccionado */
+    .card h3 { color: var(--color-primary); font-family: 'Poppins'; margin-bottom: 0.5rem; }
+    .card p { color: var(--color-muted); font-size: 0.95rem; }
+    .specs { margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .chip { background: rgba(255,255,255,0.03); padding: 0.25rem 0.6rem; border-radius: 999px; color: var(--color-muted); font-size: 0.85rem; }
+
+    /* --- ESTILOS DIAPOSITIVA 2 INTERACTIVA --- */
+    .interactive-content {
+      display: flex;
+      gap: 3rem;
+      align-items: flex-start; /* Alinea los paneles en la parte superior */
+    }
+    .left-panel {
+      flex: 1;
+    }
+    .right-panel {
+      flex: 1; /* Permite que el panel derecho crezca y ocupe el espacio restante */
+      height: 550px; /* Aumentamos la altura */
+      padding: 0; /* Quitamos el padding para que la imagen ocupe todo el espacio */
+      background: var(--bg-surface);
+      border-radius: 20px; /* Borde más redondeado */
+      border: 2px solid var(--color-primary); /* Borde primario como el de la primera diapositiva */
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4); /* Sombra más pronunciada */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0; 
+    }
+    .right-panel img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Cambiamos a 'cover' para llenar el espacio, recortando si es necesario */
+        transition: opacity 0.3s ease;
+        display: block; /* Aseguramos que la imagen se comporte como un bloque */
+    }
+    .image-placeholder {
+        color: var(--color-muted);
+        font-size: 1.5rem; /* Hacemos el texto más grande */
+        text-align: center;
+        padding: 2rem; /* Añadimos padding al placeholder */
+    }
+    /* --- FIN ESTILOS DIAPOSITIVA 2 INTERACTIVA --- */
+
+    /* Schedule (Diapositiva 4) */
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .schedule-day {
+      background: var(--bg-surface);
+      padding: 1.5rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+    .time-slot {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+      font-size: 0.95rem;
+    }
+    .time-slot:last-child { border-bottom: none; }
+    .time-slot span:first-child { color: var(--color-primary); font-weight: 600; }
+    .time-slot span:last-child { color: var(--color-muted); }
+
+    /* Nav / Controls */
+    .nav-dots { position: fixed; right: 1.2rem; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 0.75rem; z-index: 60; }
+    .nav-dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(255, 255, 255, 0.12); cursor: pointer; transition: transform var(--transition-fast), background var(--transition-fast); }
+    .nav-dot.active { background: var(--color-primary); transform: scale(1.35); }
+    .slide-indicator { position: fixed; left: 50%; transform: translateX(-50%); bottom: 1.2rem; background: rgba(2, 6, 23, 0.6); padding: 0.5rem 0.9rem; border-radius: 999px; color: var(--color-muted); z-index: 60; border: 1px solid rgba(255, 255, 255, 0.03); }
+    .progress-bar { position: fixed; top: 0; left: 0; height: 4px; width: 100%; background: rgba(59, 130, 246, 0.08); z-index: 60; }
+    .progress { height: 100%; width: 0; background: linear-gradient(90deg, var(--color-primary), var(--color-accent)); transition: width 0.25s ease; }
+    
+    .nav-buttons { 
+      position: fixed; 
+      left: 50%; 
+      transform: translateX(-50%); 
+      bottom: 1.5rem; 
+      display: flex; 
+      gap: 1.5rem; 
+      z-index: 70; 
+    }
+    .nav-button { background: var(--color-primary); color: white; border: none; padding: 0.6rem 1.5rem; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background var(--transition-fast), transform var(--transition-fast); }
+    .nav-button:hover { background: var(--color-accent); transform: scale(1.05); }
+    .nav-button:disabled { background: var(--color-muted); cursor: not-allowed; }
+
+    /* Media Query para móvil */
+    @media (max-width: 800px) {
+      .title-large { font-size: 2.8rem; text-align: center; }
+      .subtitle-large { font-size: 1rem; text-align: center; margin-bottom: 1.5rem; }
+      .hero-slide { flex-direction: column; gap: 1.5rem; padding: 2rem 1rem; }
+      .hero-content { text-align: center; }
+      .school-logo { width: 80px; margin: 0 auto 1rem auto; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-image-container { width: 100%; height: 300px; max-width: 400px; }
+      .title { font-size: 2.2rem; }
+      .nav-dots { right: 0.5rem; }
+      .slide-section { padding: 2rem 1rem; }
+      .nav-buttons { bottom: 1rem; gap: 0.75rem; }
+      .nav-button { padding: 0.5rem 1rem; font-size: 0.9rem; }
+      .slide-indicator { display: none; } 
+
+      /* --- AJUSTES MÓVIL DIAPOSITIVA 2 --- */
+      .interactive-content {
+          flex-direction: column; 
+          gap: 1.5rem; 
+      }
+      .right-panel {
+          width: 100%;
+          height: 350px; /* Ligeramente más alto en móvil */
+      }
+      /* Los cuadros se convierten en una sola columna con el grid */
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="5">
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <nav class="nav-dots" id="navDots" aria-label="Navegación de diapositivas"></nav>
+  
+  <div class="nav-buttons">
+    <button class="nav-button" id="prevSlideButton" disabled>◀ Anterior</button>
+    <button class="nav-button" id="nextSlideButton">Siguiente ▶</button>
+  </div>
+  
+  <div class="slide-indicator" id="slideIndicator" role="status">1 / 5</div>
+
+  <main class="slides" id="slides" role="presentation">
+    
+    <section class="slide-section" data-slide="1" aria-label="Introducción al Timbre Escolar Automático">
+      <div class="slide-inner container hero-slide">
+        <div class="hero-content">
+          
+          <img src="Logo.png" alt="Logo Liceo Campestre Mundo Mágico" class="school-logo">
+          <h1 class="title-large">Timbre Escolar Automático</h1>
+          <p class="subtitle-large">
+            Innovador sistema basado en <span class="resaltado">Arduino</span> con <span class="resaltado">RTC DS3231</span> y pantalla <span class="resaltado">OLED</span> para una <span class="resaltado">gestión horaria precisa y autónoma</span> en entornos educativos.
+          </p>
+          
+          <div class="hero-grid">
+            <div class="card hero-card">
+              <h3>🚀 Resumen Rápido</h3>
+              <p style="color:var(--color-muted); font-size: 1rem;">
+                Automatiza y optimiza los horarios de clases, descansos y almuerzos. Muestra eventos clave con emojis en la pantalla OLED y activa un relé de forma segura para controlar el timbre escolar de 120V.
+              </p>
+              <div class="specs" style="margin-top: 1rem;">
+                <span class="chip">Arduino UNO/Nano</span>
+                <span class="chip">RTC DS3231 (Precisión)</span>
+                <span class="chip">OLED 128x64 I2C (Visual)</span>
+                <span class="chip">Relé 5V (Seguridad 120V)</span>
+              </div>
+            </div>
+
+            <div class="card hero-card">
+              <h3>💡 Impacto y Beneficios</h3>
+              <ul style="color:var(--color-muted);margin-top:0.5rem;list-style:disc;padding-left:1.2rem; font-size: 1rem;">
+                <li><span class="resaltado">Precisión Inigualable:</span> Horarios exactos siempre, sin depender de la red eléctrica.</li>
+                <li><span class="resaltado">Libera al Personal:</span> Reduce la carga de trabajo administrativo.</li>
+                <li><span class="resaltado">Ambiente Optimizado:</span> Mejora la gestión del tiempo y la disciplina.</li>
+                <li><span class="resaltado">Implementación Sencilla:</span> Solución robusta y de bajo costo.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="hero-image-container" id="heroImageContainer">
+          
+        </div>
+      </div>
+    </section>
+
+    <section class="slide-section" data-slide="2" aria-label="Componentes Principales del Sistema">
+      <div class="slide-inner container">
+        <h2 class="section-title">Componentes Principales</h2>
+        <div class="interactive-content">
+          
+          <div class="left-panel">
+            <div class="grid" id="componentGrid">
+              <article class="card component-card" data-component="arduino" data-image-src="arduino.png" data-name="Arduino UNO / Nano"><h3>Arduino UNO / Nano</h3><p>Microcontrolador que ejecuta la lógica: lee el RTC, actualiza la pantalla OLED y activa el relé.</p></article>
+              <article class="card component-card" data-component="rtc" data-image-src="rtc.png" data-name="RTC DS3231"><h3>RTC DS3231</h3><p>Reloj de tiempo real con batería, garantiza hora exacta incluso tras cortes de energía.</p></article>
+              <article class="card component-card" data-component="oled" data-image-src="oled.png" data-name="OLED 128x64"><h3>OLED 128x64 (SSD1306)</h3><p>Pantalla monocroma para mostrar hora, día y evento actual con emojis.</p></article>
+              <article class="card component-card" data-component="relay" data-image-src="relay.png" data-name="Módulo Relé 5V"><h3>Módulo Relé 5V</h3><p>Interrumpe o conecta la alimentación del timbre. Uso con aislamiento.</p></article>
+              <article class="card component-card" data-component="bell" data-image-src="bell.png" data-name="Timbre 120V AC"><h3>Timbre 120V AC</h3><p>Timbre de línea (ej. 120V) conectado al contacto del relé.</p></article>
+            </div>
+          </div>
+          
+          <div class="right-panel">
+            <div id="imageDisplay" class="image-placeholder">
+              Selecciona un componente para ver su imagen.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="slide-section" data-slide="3" aria-label="Funcionamiento y Ventajas">
+      <div class="slide-inner container">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:1.5rem;align-items:start">
+          <div>
+            <h2 class="section-title">Funcionamiento</h2>
+            <div class="card">
+              <h3>Proceso</h3>
+              <p style="color:var(--color-muted)">El Arduino consulta el RTC cada segundo; al coincidir hora y minuto con el horario almacenado, activa el relé al segundo 0. Diferentes patrones: timbre simple (3s) o doble para descansos.</p>
+              <ul style="color:var(--color-muted);margin-top:0.5rem;list-style:disc;padding-left:1.2rem">
+                <li>Verifica día (L-V activo, S-D inactivo)</li>
+                <li>Viernes con horario reducido (fin 13:00)</li>
+                <li>Mensajes y horarios en PROGMEM para ahorrar RAM</li>
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <h2 class="section-title">Ventajas</h2>
+            <div class="features">
+              <div class="card" style="margin-bottom: 1rem;">
+                <h4>Precisión</h4><p style="color:var(--color-muted)">DS3231 mantiene la hora exacta incluso si se va la luz (gracias a su batería interna).</p>
+              </div>
+              <div class="card">
+                <h4>Automatización</h4><p style="color:var(--color-muted)">Evita la intervención manual diaria, reduciendo errores y garantizando puntualidad.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide-section" data-slide="4" aria-label="Horarios Programados Semanales">
+      <div class="slide-inner container">
+        <h2 class="section-title">Horarios Programados</h2>
+        <div class="schedule-grid">
+          <div class="schedule-day">
+            <h4 style="color:var(--color-primary)">Lunes a Jueves</h4>
+            <div class="time-slot"><span>07:30</span><span>🏫 Inicio de clases (1°)</span></div>
+            <div class="time-slot"><span>08:20</span><span>2° hora</span></div>
+            <div class="time-slot"><span>09:10</span><span>😴 Salida a descanso (doble)</span></div>
+            <div class="time-slot"><span>09:40</span><span>😴 Fin descanso (doble)</span></div>
+            <div class="time-slot"><span>12:10</span><span>🍽 Almuerzo</span></div>
+            <div class="time-slot"><span>14:00</span><span>Reinicio</span></div>
+            <div class="time-slot"><span>15:40</span><span>🏁 Salida</span></div>
+          </div>
+
+          <div class="schedule-day">
+            <h4 style="color:var(--color-primary)">Viernes</h4>
+            <div class="time-slot"><span>07:30</span><span>🏫 Inicio de clases</span></div>
+            <div class="time-slot"><span>09:10</span><span>😴 Descanso (doble)</span></div>
+            <div class="time-slot"><span>12:10</span><span>🍽 Almuerzo</span></div>
+            <div class="time-slot"><span>13:00</span><span>🏁 Fin de jornada</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section class="slide-section" data-slide="5" aria-label="Simulador Wokwi del Timbre Escolar Automático">
+        <div class="slide-inner container">
+            <div style="display:flex;flex-direction:column;gap:1rem;height:100vh; max-height: 800px; width: 100%;">
+                <h2 class="section-title">🖥️ Simulador Interactivo Wokwi</h2>
+                <p class="subtitle" style="margin-bottom: 0.5rem;">
+                    Haz clic en <span class="resaltado">"Run"</span> dentro del simulador para ver el sistema en acción. El <span class="resaltado">RTC</span> está simulado para adelantar la hora.
+                </p>
+                <div style="flex-grow: 1; border-radius: 10px; overflow: hidden; border: 4px solid var(--color-primary); box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);">
+                    <iframe 
+                        src="https://wokwi.com/projects/446736896745878529?embed=1" 
+                        width="100%" 
+                        height="100%" 
+                        frameborder="0" 
+                        allowfullscreen 
+                        style="display: block; background: #000;"
+                        aria-label="Simulador de Timbre Escolar Automático en Wokwi"
+                    ></iframe>
+                </div>
+                <footer style="display:flex;justify-content:space-between;align-items:center;margin-top:0.5rem">
+                    <div style="color:var(--color-muted); font-size: 0.9rem;">Autor: Prof. Kevin Steven Gamba González — Liceo Campestre Mundo Mágico, Moniquirá (2025)</div>
+                    <div style="color:var(--color-muted);font-size:0.9rem">Open Day Presentation</div>
+                </footer>
+            </div>
+        </div>
+    </section>
+  </main>
+
+  <script>
+    (function(){
+      const slides = Array.from(document.querySelectorAll('.slide-section'));
+      const navDotsContainer = document.getElementById('navDots');
+      const indicator = document.getElementById('slideIndicator');
+      const progressEl = document.getElementById('progress');
+      const prevBtn = document.getElementById('prevSlideButton');
+      const nextBtn = document.getElementById('nextSlideButton');
+      const totalSlides = slides.length;
+      let currentSlideIndex = 0; 
+
+      // --- Función para actualizar la diapositiva activa ---
+      function setActive(n) {
+        currentSlideIndex = n - 1;
+        document.querySelectorAll('.nav-dot').forEach((d, i) => {
+          const isActive = i === currentSlideIndex;
+          d.classList.toggle('active', isActive);
+          d.setAttribute('aria-current', isActive ? 'true' : 'false');
+        });
+
+        prevBtn.disabled = currentSlideIndex === 0;
+        nextBtn.disabled = currentSlideIndex === totalSlides - 1;
+
+        indicator.textContent = `${n} / ${totalSlides}`;
+        progressEl.style.width = `${(n / totalSlides) * 100}%`;
+        document.querySelector('.progress-bar').setAttribute('aria-valuenow', n);
+
+        // Si la diapositiva 2 se activa, aseguramos que el panel de imagen esté limpio
+        if (n === 2) {
+            resetImageDisplay();
+        }
+      }
+
+      // --- Funciones de Navegación ---
+      function goTo(n) {
+        const targetIndex = n - 1;
+        if (targetIndex >= 0 && targetIndex < totalSlides) {
+          slides[targetIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
+          setActive(n);
+        }
+      }
+
+      function advance(direction) {
+        let newIndex = currentSlideIndex + direction;
+        if (newIndex < 0) newIndex = 0;
+        if (newIndex >= totalSlides) newIndex = totalSlides - 1;
+        goTo(newIndex + 1);
+      }
+      
+      // --- Lógica Interactiva Diapositiva 2 ---
+      const imageDisplay = document.getElementById('imageDisplay');
+      const componentCards = document.querySelectorAll('.component-card');
+
+      function resetImageDisplay() {
+          imageDisplay.innerHTML = `<div class="image-placeholder">Selecciona un componente para ver su imagen.</div>`; // Envolver el texto en un div para mantener el estilo
+          // Asegurarse de que no haya ninguna clase activa en las tarjetas al resetear
+          componentCards.forEach(card => card.classList.remove('active'));
+      }
+
+      function handleCardClick(event) {
+          // Remover la clase 'active' de todas las tarjetas
+          componentCards.forEach(card => card.classList.remove('active'));
+          
+          // Establecer la clase 'active' en la tarjeta clickeada
+          const clickedCard = event.currentTarget;
+          clickedCard.classList.add('active');
+
+          const imgSrc = clickedCard.dataset.imageSrc; // e.g., 'arduino.png'
+          const componentName = clickedCard.dataset.name; // e.g., 'Arduino UNO / Nano'
+
+          imageDisplay.classList.remove('image-placeholder'); // Quitar la clase del placeholder
+          imageDisplay.innerHTML = ''; 
+          
+          const newImg = document.createElement('img');
+          newImg.src = imgSrc;
+          newImg.alt = `Imagen de ${componentName}`;
+          
+          imageDisplay.appendChild(newImg);
+      }
+
+      componentCards.forEach(card => {
+          card.addEventListener('click', handleCardClick);
+      });
+      // --- Fin Lógica Interactiva Diapositiva 2 ---
+
+
+      // --- Inicialización y Eventos Generales ---
+      prevBtn.addEventListener('click', () => advance(-1));
+      nextBtn.addEventListener('click', () => advance(1));
+
+      slides.forEach((s, i) => {
+        const dot = document.createElement('button');
+        dot.className = 'nav-dot';
+        dot.setAttribute('aria-label', `Ir a la diapositiva ${i + 1}`);
+        dot.setAttribute('role', 'radio');
+        dot.addEventListener('click', () => goTo(i + 1));
+        navDotsContainer.appendChild(dot);
+      });
+
+      // Observer para detectar qué diapositiva está visible
+      const observerOptions = { threshold: 0.6 };
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(en => {
+          if (en.isIntersecting) {
+            const idx = slides.indexOf(en.target);
+            setActive(idx + 1);
+          }
+        });
+      }, observerOptions);
+      slides.forEach(s => io.observe(s));
+      
+      // Controles de teclado y rueda
+      let wheelTimeout = 0;
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') advance(1);
+        if (e.key === 'ArrowLeft' || e.key === 'PageUp') advance(-1);
+        if (e.key === 'Home') goTo(1);
+        if (e.key === 'End') goTo(totalSlides);
+      });
+      window.addEventListener('wheel', (e) => {
+        if (wheelTimeout) return;
+        wheelTimeout = setTimeout(() => wheelTimeout = 0, 350);
+        if (e.deltaY > 0) advance(1); else advance(-1);
+      }, { passive: true });
+      
+      setActive(1);
+
+    })();
+  </script>
+</body>
+</html>
